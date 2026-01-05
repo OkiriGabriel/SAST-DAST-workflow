@@ -1,0 +1,15 @@
+{
+    "name": "secure-webapp-lab",
+    "version": "1.0.0",
+    "description": "Secure web application demo",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js",
+      "test": "echo \"No tests yet\" && exit 0"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "helmet": "^7.1.0",
+      "dotenv": "^16.3.1"
+    }
+  }

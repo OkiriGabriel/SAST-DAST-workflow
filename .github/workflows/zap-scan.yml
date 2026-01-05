@@ -39,6 +39,7 @@ jobs:
         rules_file_name: '.zap/rules.tsv'
         cmd_options: '-a'
         allow_issue_writing: false
+        artifact_name: zap-scan
 
     - name: Upload ZAP Scan Results
       uses: actions/upload-artifact@v4

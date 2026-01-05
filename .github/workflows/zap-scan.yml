@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   zap-scan:
     name: ZAP Baseline Scan
@@ -19,7 +23,7 @@ jobs:
         node-version: '18'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Start application
       run: |
@@ -34,6 +38,7 @@ jobs:
         target: 'http://localhost:3000'
         rules_file_name: '.zap/rules.tsv'
         cmd_options: '-a'
+        allow_issue_writing: false
 
     - name: Upload ZAP Scan Results
       uses: actions/upload-artifact@v4

@@ -1,7 +1,6 @@
-nodeemo
 node_modules
 npm-debug.log
 .env
-.git
-.gitignore
-README.md
+.DS_Store
+*.sarif
+reports/

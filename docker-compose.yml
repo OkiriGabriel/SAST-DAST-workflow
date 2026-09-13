@@ -1,0 +1,97 @@
+# version: '3.1'
+
+# services:
+#   web:
+#     image: odoo:latest
+#     depends_on:
+#       - db
+#     ports:
+#       - "8069:8069"
+#     environment:
+#       - HOST=db
+#       - USER=odoo
+#       - PASSWORD=odoo_password
+#     volumes:
+#       - odoo-web-data:/var/lib/odoo
+#       - ./config:/etc/odoo
+#       - ./addons:/mnt/extra-addons
+
+#   db:
+#     image: postgres:15
+#     environment:
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=odoo
+#       - POSTGRES_PASSWORD=odoo_password
+#     volumes:
+#       - odoo-db-data:/var/lib/postgresql/data
+
+# volumes:
+#   odoo-web-data:
+#   odoo-db-data:
+
+# services:
+#   web:
+#     image: odoo:latest
+#     ports:
+#       - "8069:8069"
+#     environment:
+#       - HOST=your-rds-endpoint.region.rds.amazonaws.com
+#       - PORT=5432
+#       - USER=your_db_username
+#       - PASSWORD=your_db_password
+#     volumes:
+#       - odoo-web-data:/var/lib/odoo
+#       - ./config:/etc/odoo
+#       - ./addons:/mnt/extra-addons
+
+# volumes:
+#   odoo-web-data:
+
+services:
+  web:
+    image: odoo:17.0
+    restart: unless-stopped
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=${DB_HOST}
+      - PORT=${DB_PORT}
+      - USER=${DB_USER}
+      - PASSWORD=${DB_PASSWORD}
+      - DB_MAXCONN=${DB_MAXCONN:-64}
+      - DB_TEMPLATE=${DB_TEMPLATE:-template0}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+      - ./logs:/var/log/odoo
+    command: --
+      --limit-time-cpu=600
+      --limit-time-real=1200
+      --limit-memory-hard=2684354560
+      --workers=2
+      --max-cron-threads=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - odoo-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+volumes:
+  odoo-web-data:
+    driver: local
+
+networks:
+  odoo-network:
+    driver: bridge
